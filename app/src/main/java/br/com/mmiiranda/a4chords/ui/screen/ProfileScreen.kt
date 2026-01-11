@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -25,7 +24,9 @@ import androidx.compose.ui.unit.sp
 fun ProfileScreen(
     onBackClick: () -> Unit,
     onSongClick: (String) -> Unit,
-    onLogout: () -> Unit
+    onAddClick: () -> Unit,
+    onLogout: () -> Unit,
+    onEditProfile: ()-> Unit
 ) {
     Column(
         modifier = Modifier
@@ -100,7 +101,6 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Estatísticas
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -138,19 +138,27 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Botões de ação
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     OutlinedButton(
-                        onClick = { /* Editar perfil */ },
+                        onClick = onEditProfile,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = Color(0xFF2196F3)
                         )
                     ) {
-                        Text("Editar Perfil")
+                        Text("Editar")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = onAddClick,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text("Submeter Cifra")
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -165,9 +173,8 @@ fun ProfileScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
-        // Seção: Músicas Favoritas
         Text(
             text = "Músicas Favoritas",
             fontSize = 18.sp,

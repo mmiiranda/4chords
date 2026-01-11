@@ -35,18 +35,16 @@ fun HomeScreen(
                     )
                 },
                 actions = {
-                    Text("Perfil")
+                    TextButton(
+                        onClick = onProfileClick
+                    ) {
+                        Text("Perfil")
+                    }
                 }
+
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddClick,
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Text("Adicionar")
-            }
-        }
+
     ) { paddingValues ->
         Column(
             modifier = Modifier

@@ -1,27 +1,29 @@
 package br.com.mmiiranda.a4chords.ui.screen
 
-
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import br.com.mmiiranda.a4chords.data.model.*
 
 @Composable
 fun AddScreen(
     onBackClick: () -> Unit
 ) {
+    // Inputs
     var title by remember { mutableStateOf("") }
-    var artist by remember { mutableStateOf("") }
-    var chords by remember { mutableStateOf("") }
+    var artistName by remember { mutableStateOf("") }
+    var chordsText by remember { mutableStateOf("") }
+
+    // Usuário simulado (pode trocar depois pelo FirebaseAuth)
+    val currentUserId = "user_123"
+    val currentUserName = "Maurício"
 
     Column(
         modifier = Modifier
@@ -29,73 +31,108 @@ fun AddScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Cabeçalho
+
+        // Cabeçalho simples
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(
-                onClick = onBackClick,
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                Text("← Voltar")
-            }
-
             Text(
-                text = "Nova Música",
+                text = "←",
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .clickable { onBackClick() }
+            )
+            Text(
+                text = "Nova Cifra",
+                style = MaterialTheme.typography.titleLarge
             )
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Card(
             modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
+
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Título da música") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Artista
                 OutlinedTextField(
-                    value = artist,
-                    onValueChange = { artist = it },
+                    value = artistName,
+                    onValueChange = { artistName = it },
                     label = { Text("Artista") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Cifra:",
-                )
+                Text("Cifra")
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
-                    value = chords,
-                    onValueChange = { chords = it },
-                    placeholder = { Text("Digite os acordes aqui...\nEx: [C]Somewhere over the [G]rainbow") },
+                    value = chordsText,
+                    onValueChange = { chordsText = it },
+                    placeholder = {
+                        Text(
+                            "[C]Somewhere over the [G]rainbow\n" +
+                                    "[Am]Way up [F]high"
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(220.dp),
                     singleLine = false,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontFamily = FontFamily.Monospace
+                    )
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
                     onClick = {
-                        println("Salvando: $title - $artist")
+
+                        // Cria Song
+                        val song = Song(
+                            title = title,
+                            artistName = artistName,
+                            chords = chordsText,
+                            submittedBy = currentUserId,
+                            submittedByName = currentUserName
+                        )
+
+                        // Cria Submission
+                        val submission = Submission(
+                            songData = song,
+                            type = SubmissionType.NEW_SONG,
+                            status = SubmissionStatus.PENDING,
+                            submittedBy = currentUserId,
+                            submittedByName = currentUserName
+                        )
+
+                        // Debug / futuro Firestore
+                        println("SUBMISSION:")
+                        println(submission)
+
                         onBackClick()
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = title.isNotBlank() && artist.isNotBlank() && chords.isNotBlank(),
-
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    enabled = title.isNotBlank()
+                            && artistName.isNotBlank()
+                            && chordsText.isNotBlank()
                 ) {
-                    Text("💾 Salvar Música")
+                    Text("📤 Enviar para revisão")
                 }
             }
         }

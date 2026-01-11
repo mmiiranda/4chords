@@ -1,4 +1,4 @@
-package br.com.mauricio.a4chords
+package br.com.mmiiranda.a4chords
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import br.com.mmiiranda.a4chords.ui.navigation.AppNavigation
+import br.com.mauricio.a4chords.navigation.AppNavigation
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

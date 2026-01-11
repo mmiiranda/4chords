@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
@@ -18,177 +19,122 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.com.mmiiranda.a4chords.data.model.Artist
+
+import br.com.mmiiranda.a4chords.ui.components.SongCard
+
 
 @Composable
 fun ArtistScreen(
-    artistId: String,
+    artist: Artist,
+    songs: List<Song>,
     onBackClick: () -> Unit,
     onSongClick: (String) -> Unit
 ) {
-    val artist = when (artistId) {
-        "iz" -> ArtistData(
-            name = "Israel Kamakawiwo'ole",
-            bio = "Cantor, compositor e músico havaiano. Ficou mundialmente famoso por sua versão de 'Somewhere Over the Rainbow/What a Wonderful World'. Conhecido carinhosamente como 'Iz', sua música continua inspirando pessoas ao redor do mundo.",
-            songs = listOf(
-                "Somewhere Over the Rainbow",
-                "What a Wonderful World",
-                "White Sandy Beach",
-                "Hawaiʻi 78",
-                "Over the Rainbow"
-            ),
-            followers = "1.2M"
-        )
-        else -> ArtistData(
-            name = "Artista",
-            bio = "Descrição do artista...",
-            songs = listOf("Música 1", "Música 2", "Música 3"),
-            followers = "100K"
-        )
-    }
+    val primaryColor = Color(0xFF00897B)
+    val backgroundColor = Color(0xFFF4FAF8)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundColor)
     ) {
-        // Imagem de capa do artista
-        Box(
+
+        // TopBar simples
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Placeholder - você pode substituir por imagem real
-            Box(
+            Text(
+                text = "←",
+                fontSize = 20.sp,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFF2196F3).copy(alpha = 0.8f))
+                    .clickable { onBackClick() }
+                    .padding(end = 16.dp)
             )
 
-            // Botão Voltar sobre a imagem
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .background(Color.Black.copy(alpha = 0.3f), CircleShape)
-            ) {
-                Text("←", color = Color.White, fontSize = 20.sp)
-            }
+            Text(
+                text = "Artistas",
+                fontWeight = FontWeight.Medium
+            )
         }
 
-        // Conteúdo
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            // Nome do artista
-            Text(
-                text = artist.name,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+        Column(modifier = Modifier.padding(16.dp)) {
 
-            // Seguidores
-            Text(
-                text = "🎵 ${artist.followers} seguidores",
-                fontSize = 14.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            // Biografia
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+            // Avatar + nome
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .background(primaryColor.copy(alpha = 0.15f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
-                        text = "Sobre",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Text(
-                        text = artist.bio,
-                        fontSize = 14.sp,
-                        color = Color.DarkGray,
-                        lineHeight = 20.sp
+                        text = artist.name.take(1),
+                        fontSize = 28.sp,
+                        color = primaryColor,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-            // Músicas do artista
-            Text(
-                text = "Músicas Populares",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
+                Column {
+                    Text(
+                        text = artist.name,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )
 
-            LazyColumn {
-                items(artist.songs) { song ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable { onSongClick(song) },
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(Color(0xFFE3F2FD), CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "♪",
-                                    fontSize = 18.sp,
-                                    color = Color(0xFF2196F3)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = song, fontSize = 16.sp)
-                                Text(
-                                    text = "Dificuldade: Fácil • 4 acordes",
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                            }
-
-                            IconButton(onClick = { /* Favoritar */ }) {
-                                Text("❤️", fontSize = 18.sp)
-                            }
-                        }
+                    if (artist.genres.isNotEmpty()) {
+                        Text(
+                            text = artist.genres.joinToString(" / "),
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            modifier = Modifier
+                                .background(primaryColor, RoundedCornerShape(50))
+                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                        )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Button(
-                onClick = { /* Seguir artista */ },
-                modifier = Modifier.fillMaxWidth(),
+            Text(
+                text = artist.bio,
+                fontSize = 14.sp,
+                color = Color.DarkGray
+            )
 
-            ) {
-                Text("➕ Seguir Artista")
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "${artist.totalSongs} cifras disponíveis",
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Cifras",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LazyColumn {
+                items(songs) { song ->
+                    SongCard(
+                        song = song,
+                        onClick = { onSongClick(song.title) }
+                    )
+                }
             }
         }
     }
 }
-
-data class ArtistData(
-    val name: String,
-    val bio: String,
-    val songs: List<String>,
-    val followers: String
-)

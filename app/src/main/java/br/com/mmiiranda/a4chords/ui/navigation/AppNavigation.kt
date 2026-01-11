@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.com.mauricio.a4chords.screens.*
+import br.com.mmiiranda.a4chords.data.model.Artist
+import br.com.mmiiranda.a4chords.ui.screen.*
 
 @Composable
 fun AppNavigation() {
@@ -12,38 +13,50 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "login"  // ← Agora começa no login
+        startDestination = "home"
     ) {
-        // Tela de Login
-        composable("login") {
-            LoginScreen(
-                onLoginSuccess = { navController.navigate("home") },
-                onRegisterClick = { /* Pode abrir modal ou outra tela */ },
-                onSkipLogin = { navController.navigate("home") }
-            )
-        }
 
-        // Tela Inicial
         composable("home") {
             HomeScreen(
                 onSongClick = { navController.navigate("song/$it") },
                 onSearchClick = { navController.navigate("search") },
                 onAddClick = { navController.navigate("add") },
-                onProfileClick = { navController.navigate("profile") }  // ← Adicione este parâmetro
+                onProfileClick = { navController.navigate("profile") },
+                onArtistClick = { artistId ->
+                    navController.navigate("artist/$artistId")
+                }
             )
         }
 
-        // Detalhe da Música
-        composable("song/{title}") { backStackEntry ->
-            val title = backStackEntry.arguments?.getString("title") ?: ""
+        composable("login") {
+            LoginScreen(
+                onLoginSuccess = { navController.navigate("home") },
+                onRegisterClick = {},
+                onSkipLogin = { navController.navigate("home") }
+            )
+        }
+
+
+
+        composable("song/{id}") { backStackEntry ->
+            val songId = backStackEntry.arguments?.getString("id") ?: ""
+
             SongScreen(
-                songTitle = title,
+                songTitle = songId,
+                artistName = "Israel Kamakawiwo'ole",
+                chordsText = """
+            Intro: C - G - Am - F
+
+            [C]Somewhere over the rainbow
+            [G]Way up high
+            [Am]And the dreams that you dream of
+            [F]Once in a lullaby
+        """.trimIndent(),
                 onBackClick = { navController.popBackStack() },
-                onArtistClick = { navController.navigate("artist/iz") }  // ← Navega para artista
+                onArtistClick = { navController.navigate("artist/iz") }
             )
         }
 
-        // Busca
         composable("search") {
             SearchScreen(
                 onBackClick = { navController.popBackStack() },
@@ -51,30 +64,54 @@ fun AppNavigation() {
             )
         }
 
-        // Adicionar Música
         composable("add") {
             AddScreen(
                 onBackClick = { navController.popBackStack() }
             )
         }
 
-        // Perfil
         composable("profile") {
             ProfileScreen(
                 onBackClick = { navController.popBackStack() },
                 onSongClick = { navController.navigate("song/$it") },
-                onLogout = { navController.navigate("login") }
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
+                onAddClick = { navController.navigate("add") },
+                onEditProfile = {navController.navigate("edit-profile")}
             )
         }
 
-        // Artista
         composable("artist/{id}") { backStackEntry ->
             val artistId = backStackEntry.arguments?.getString("id") ?: ""
+
+            val artist = Artist.SAMPLE_ARTISTS.firstOrNull { it.id == artistId }
+                ?: Artist()
+
+            val songs = emptyList<Song>()
+
             ArtistScreen(
-                artistId = artistId,
+                artist = artist,
+                songs = songs,
                 onBackClick = { navController.popBackStack() },
                 onSongClick = { navController.navigate("song/$it") }
             )
         }
+
+        composable("edit-profile") {
+            EditProfileScreen(
+                initialName = "Maurício",
+                initialUsername = "@mmiiranda",
+                initialBio = "Apaixonado por música 🎵",
+                onBackClick = { navController.popBackStack() },
+                onSaveClick = { name, username, bio ->
+                    // Aqui depois você salva no Firebase
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 }

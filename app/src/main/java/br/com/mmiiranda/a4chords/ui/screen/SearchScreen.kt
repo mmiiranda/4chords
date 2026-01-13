@@ -5,93 +5,92 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import br.com.mmiiranda.a4chords.ui.viewmodel.SearchState
+import br.com.mmiiranda.a4chords.ui.viewmodel.SearchViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    onBackClick: () -> Unit,
-    onSongClick: (String) -> Unit
+    viewModel: SearchViewModel,
+    onSongClick: (String) -> Unit,
+    onBackClick: () -> Unit
 ) {
-    var searchText by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("") }
+    val state = viewModel.uiState
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Cabeçalho
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = onBackClick,
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                Text("← Voltar")
-            }
-
-            Text(
-                text = "Buscar",
-                color = Color(0xFF2196F3)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Buscar artista") },
+                navigationIcon = {
+                    Button(onClick = onBackClick) {
+                        Text("<-")
+                    }
+                }
             )
         }
+    ) { padding ->
 
-        // Campo de busca
-        OutlinedTextField(
-            value = searchText,
-            onValueChange = { searchText = it },
-            label = { Text("Nome da música ou artista") },
-            modifier = Modifier.fillMaxWidth(),
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+        ) {
 
-        Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = { Text("Ex: marina-sena") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
 
-        if (searchText.isEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = { viewModel.searchArtist(query) },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Digite para buscar músicas")
+                Text("Buscar")
             }
-        } else {
-            LazyColumn {
-                items(listOf(
-                    "Over the Rainbow - Israel Kamakawiwo'ole",
-                    "Rainbow - Kacey Musgraves",
-                    "Rainbow Connection - Kermit",
-                    "Set Fire to the Rain - Adele",
-                    "Purple Rain - Prince"
-                ).filter { it.contains(searchText, ignoreCase = true) }) { result ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                            .clickable { onSongClick(result) },
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                text = result.split(" - ")[0],
 
-                            )
-                            Text(
-                                text = result.split(" - ")[1],
+            Spacer(modifier = Modifier.height(16.dp))
+
+            when (state) {
+                SearchState.Idle -> Unit
+                SearchState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                SearchState.Error -> {
+                    Text("Erro ao buscar artista")
+                }
+
+                is SearchState.Success -> {
+                    LazyColumn {
+                        items(state.songs) { song ->
+                            ListItem(
+                                headlineContent = { Text(song.name) },
+                                modifier = Modifier.clickable {
+                                    onSongClick(song.url)
+                                }
                             )
                         }
                     }
                 }
+
             }
         }
     }

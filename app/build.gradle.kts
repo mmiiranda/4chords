@@ -3,9 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-//    id("com.android.application")
-    id("com.google.gms.google-services")
-    id("kotlin-kapt")
+
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 android {
@@ -35,9 +34,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+        }
     }
     buildFeatures {
         compose = true
@@ -45,6 +46,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.runtime)
+    val room_version = "2.6.1"
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -101,8 +105,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
 
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:${room_version}")
+    implementation("androidx.room:room-ktx:${room_version}")
+    ksp("androidx.room:room-compiler:$room_version")
 
 }

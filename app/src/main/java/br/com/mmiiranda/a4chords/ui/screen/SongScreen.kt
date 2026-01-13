@@ -1,118 +1,69 @@
 package br.com.mmiiranda.a4chords.ui.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import br.com.mmiiranda.a4chords.ui.components.ActionButton
-import br.com.mmiiranda.a4chords.utils.extractChords
+import br.com.mmiiranda.a4chords.ui.viewmodel.SongViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongScreen(
-    songTitle: String,
-    artistName: String,
-    chordsText: String,
-    onBackClick: () -> Unit,
-    onArtistClick: () -> Unit
+    url: String,
+    viewModel: SongViewModel,
+    onBackClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+    val (artist, song) = viewModel.parseSongInfo(url)
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 12.dp)
-        ) {
-            Text(
-                text = "←",
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .clickable { onBackClick() }
-                    .padding(end = 12.dp)
-            )
+    LaunchedEffect(url) {
+        viewModel.loadCifra(url)
+    }
 
-            Text(
-                text = "4Chords",
-                fontSize = 16.sp,
-                color = Color.Gray
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Cifra $song") },
+                navigationIcon = {
+                    Button(onClick = onBackClick){
+                        Text("<-")
+                    }
+
+                }
             )
         }
+    ) { padding ->
 
-        Text(
-            text = songTitle,
-            fontSize = 26.sp,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-        )
-
-        Text(
-            text = artistName,
-            fontSize = 16.sp,
-            color = Color(0xFF2196F3),
+        Column(
             modifier = Modifier
-                .padding(top = 4.dp)
-                .clickable { onArtistClick() }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(bottom = 16.dp)
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            ActionButton("♡ Curtir")
-            ActionButton("↗ Compartilhar")
-            ActionButton("✎ Sugerir edição")
-        }
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp)
-        ) {
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text(
-                    text = "Acordes",
-                    fontSize = 16.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
+            if (viewModel.cifra == null) {
+                CircularProgressIndicator()
+            } else {
+                Text("Artista $artist",
+                    fontWeight = FontWeight.Bold
                 )
-
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = extractChords(chordsText),
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 14.sp
+                    text = viewModel.cifra!!,
+                    fontFamily = FontFamily.Monospace
                 )
             }
         }
-
-        Card(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = chordsText,
-                modifier = Modifier.padding(16.dp),
-                fontFamily = FontFamily.Monospace,
-                fontSize = 15.sp,
-                lineHeight = 22.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = "Enviado por usuário • 2026",
-            fontSize = 12.sp,
-            color = Color.Gray
-        )
     }
 }
+

@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "songs")
 data class SongEntity(
-    @PrimaryKey val id: String,
-    val title: String,
+    @PrimaryKey val url: String,
     val artist: String,
-    val chords: String
+    val name: String,
+    val cifra: String? = null
 )

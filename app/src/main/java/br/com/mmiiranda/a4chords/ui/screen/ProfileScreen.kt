@@ -1,39 +1,35 @@
+// ProfileScreen.kt
 package br.com.mmiiranda.a4chords.ui.screen
-
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.com.mmiiranda.a4chords.ui.viewmodel.ThemeViewModel
 
 @Composable
 fun ProfileScreen(
+    themeViewModel: ThemeViewModel,
     onBackClick: () -> Unit,
     onSongClick: (String) -> Unit,
     onAddClick: () -> Unit,
     onLogout: () -> Unit,
-    onEditProfile: ()-> Unit
+    onEditProfile: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Cabeçalho
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -41,6 +37,9 @@ fun ProfileScreen(
         ) {
             Button(
                 onClick = onBackClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 Text("← Voltar")
             }
@@ -48,25 +47,25 @@ fun ProfileScreen(
             Text(
                 text = "Meu Perfil",
                 fontSize = 20.sp,
-                color = Color(0xFF2196F3),
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
 
-            // Espaço vazio para centralizar título
             Spacer(modifier = Modifier.width(60.dp))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Card do perfil
         Card(
             modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Avatar
                 Box(
                     modifier = Modifier
                         .size(100.dp)
@@ -76,30 +75,55 @@ fun ProfileScreen(
                     Text(
                         text = "MA",
                         fontSize = 32.sp,
-                        color = Color(0xFF2196F3),
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Nome
                 Text(
                     text = "Maurício Miranda",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Email
                 Text(
                     text = "mauricio@email.com",
                     fontSize = 14.sp,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     modifier = Modifier.padding(top = 4.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // Linha com o Switch do Tema
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Tema Escuro",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
+
+//                    Switch(
+//                        checked = themeViewModel.isDarkTheme,
+//                        onCheckedChange = { themeViewModel.setDarkTheme(it) },
+//                        colors = SwitchDefaults.colors(
+//                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+//                            checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+//                            uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+//                            uncheckedTrackColor = MaterialTheme.colorScheme.primaryContainer
+//                        )
+//                    )
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -110,9 +134,13 @@ fun ProfileScreen(
                             text = "24",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF2196F3)
+                            color = MaterialTheme.colorScheme.primary
                         )
-                        Text("Favoritas", fontSize = 12.sp, color = Color.Gray)
+                        Text(
+                            "Favoritas",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -120,9 +148,13 @@ fun ProfileScreen(
                             text = "8",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF4CAF50)
+                            color = MaterialTheme.colorScheme.secondary
                         )
-                        Text("Enviadas", fontSize = 12.sp, color = Color.Gray)
+                        Text(
+                            "Enviadas",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
                     }
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -130,9 +162,13 @@ fun ProfileScreen(
                             text = "156",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFF9800)
+                            color = MaterialTheme.colorScheme.tertiary
                         )
-                        Text("Visualizações", fontSize = 12.sp, color = Color.Gray)
+                        Text(
+                            "Visualizações",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
                     }
                 }
 
@@ -146,7 +182,7 @@ fun ProfileScreen(
                         onClick = onEditProfile,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color(0xFF2196F3)
+                            contentColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Text("Editar")
@@ -157,6 +193,9 @@ fun ProfileScreen(
                     Button(
                         onClick = onAddClick,
                         modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
                     ) {
                         Text("Submeter Cifra")
                     }
@@ -166,6 +205,9 @@ fun ProfileScreen(
                     Button(
                         onClick = onLogout,
                         modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
                     ) {
                         Text("Sair")
                     }
@@ -179,7 +221,7 @@ fun ProfileScreen(
             text = "Músicas Favoritas",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
@@ -196,6 +238,9 @@ fun ProfileScreen(
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
                         .clickable { onSongClick(song) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
                 ) {
                     Row(
                         modifier = Modifier.padding(12.dp),
@@ -206,14 +251,21 @@ fun ProfileScreen(
                             modifier = Modifier.padding(end = 12.dp)
                         )
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = song, fontSize = 16.sp)
+                            Text(
+                                text = song,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                             Text(
                                 text = "Israel Kamakawiwo'ole",
                                 fontSize = 14.sp,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                             )
                         }
-                        Text("→", color = Color.Gray)
+                        Text(
+                            "→",
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
                     }
                 }
             }

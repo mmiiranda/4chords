@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import br.com.mmiiranda.a4chords.data.model.*
 
 @Composable
 fun AddScreen(
@@ -102,26 +101,11 @@ fun AddScreen(
                     onClick = {
 
                         // Cria Song
-                        val song = Song(
-                            title = title,
-                            artistName = artistName,
-                            chords = chordsText,
-                            submittedBy = currentUserId,
-                            submittedByName = currentUserName
-                        )
 
-                        // Cria Submission
-                        val submission = Submission(
-                            songData = song,
-                            type = SubmissionType.NEW_SONG,
-                            status = SubmissionStatus.PENDING,
-                            submittedBy = currentUserId,
-                            submittedByName = currentUserName
-                        )
 
                         // Debug / futuro Firestore
                         println("SUBMISSION:")
-                        println(submission)
+
 
                         onBackClick()
                     },

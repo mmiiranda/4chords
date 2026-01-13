@@ -7,9 +7,47 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:217017841376:android:84e4c8da7e43e3db030285",
+        "mobilesdk_app_id": "1:217017841376:android:ba1793b673bae6a3030285",
         "android_client_info": {
           "package_name": "br.com.mmiiranda.a4chords"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTIpIseTS2k8_V2Zm2cho5KHtUWncWL8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217017841376:android:84e4c8da7e43e3db030285",
+        "android_client_info": {
+          "package_name": "com.mauricio.fourchords"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTIpIseTS2k8_V2Zm2cho5KHtUWncWL8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217017841376:android:de1d25a4168067d3030285",
+        "android_client_info": {
+          "package_name": "com.zack.mal"
         }
       },
       "oauth_client": [],

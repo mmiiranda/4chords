@@ -3,7 +3,6 @@ package br.com.mmiiranda.a4chords.utils
 import android.content.Context
 
 object ThemePrefs {
-
     private const val PREFS = "prefs"
     private const val DARK_MODE = "dark_mode"
 

@@ -1,4 +1,3 @@
-// A4ChordsTheme.kt
 package br.com.mmiiranda.a4chords.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,8 +14,13 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = Color(0xFF80CBC4),
     background = Color(0xFF121212),
     surface = Color(0xFF1E1E1E),
+    onPrimary = Color(0xFF000000),
+    onSecondary = Color(0xFF000000),
+    onTertiary = Color(0xFF000000),
+    onBackground = Color(0xFFFFFFFF),
     onSurface = Color(0xFFFFFFFF),
-    onBackground = Color(0xFFFFFFFF)
+    primaryContainer = Color(0xFF004D40),
+    secondaryContainer = Color(0xFF004D40)
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -25,13 +29,18 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Color(0xFF004D40),
     background = Color(0xFFFFFFFF),
     surface = Color(0xFFFFFFFF),
+    onPrimary = Color(0xFFFFFFFF),
+    onSecondary = Color(0xFFFFFFFF),
+    onTertiary = Color(0xFFFFFFFF),
+    onBackground = Color(0xFF000000),
     onSurface = Color(0xFF000000),
-    onBackground = Color(0xFF000000)
+    primaryContainer = Color(0xFF80CBC4),
+    secondaryContainer = Color(0xFF80CBC4)
 )
 
 @Composable
 fun A4ChordsTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean,
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
@@ -47,7 +56,6 @@ fun A4ChordsTheme(
     )
 }
 
-// Cores para o Switch
 val SwitchColors
     @Composable
     get() = SwitchDefaults.colors(

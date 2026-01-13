@@ -13,6 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import br.com.mmiiranda.a4chords.ui.viewmodel.ThemeViewModel
 import br.com.mmiiranda.a4chords.ui.theme.SwitchColors
 import br.com.mmiiranda.a4chords.ui.viewmodel.NotificationViewModel
@@ -33,10 +35,20 @@ fun SettingsScreen(
     var selectedTime by remember { mutableStateOf(LocalTime.of(18, 0)) }
     var showPermissionDialog by remember { mutableStateOf(false) }
 
+    // OBSERVE o estado do tema
+    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+
+    // VERIFIQUE se o lembrete já está agendado
+    LaunchedEffect(Unit) {
+        isNotificationEnabled = notificationViewModel.isReminderScheduled(context)
+    }
+
+    // Lançador para permissão de notificação (Android 13+)
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
+            // Permissão concedida, agenda o lembrete
             notificationViewModel.scheduleDailyReminder(
                 context,
                 selectedTime.hour,
@@ -44,21 +56,31 @@ fun SettingsScreen(
             )
             isNotificationEnabled = true
         } else {
+            // Permissão negada
             isNotificationEnabled = false
             showPermissionDialog = true
         }
     }
 
-    LaunchedEffect(Unit) {
-        isNotificationEnabled = notificationViewModel.isReminderScheduled(context)
-    }
+    // Verifica se precisa solicitar permissão
+    val needsPermission = PermissionUtils.shouldRequestNotificationPermission() &&
+            !PermissionUtils.hasNotificationPermission(context)
 
     if (showPermissionDialog) {
         AlertDialog(
             onDismissRequest = { showPermissionDialog = false },
             title = { Text("Permissão necessária") },
             text = {
-                Text("Para enviar lembretes de prática, o app precisa da permissão para mostrar notificações. Você pode ativar essa permissão nas configurações do app.")
+                Column {
+                    Text("Para enviar lembretes de prática, o app precisa da permissão para mostrar notificações.")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Vá em:")
+                    Text("• Configurações do dispositivo")
+                    Text("• Aplicativos")
+                    Text("• 4Chords")
+                    Text("• Notificações")
+                    Text("• Permitir notificações")
+                }
             },
             confirmButton = {
                 Button(
@@ -76,7 +98,9 @@ fun SettingsScreen(
                 title = { Text("Configurações") },
                 navigationIcon = {
                     Button(onClick = onBackClick) {
-                        Text("Voltar")
+                        Text(
+                            "Voltar"
+                        )
                     }
                 }
             )
@@ -115,7 +139,7 @@ fun SettingsScreen(
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Switch(
-                                checked = themeViewModel.isDarkTheme,
+                                checked = isDarkTheme,
                                 onCheckedChange = { themeViewModel.toggleTheme() },
                                 colors = SwitchColors
                             )
@@ -151,8 +175,13 @@ fun SettingsScreen(
                                     "Lembretes Diários",
                                     style = MaterialTheme.typography.bodyLarge
                                 )
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                                    !PermissionUtils.hasNotificationPermission(context)) {
+                                if (needsPermission && !isNotificationEnabled) {
+                                    Text(
+                                        "Toque para ativar",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
+                                } else if (needsPermission) {
                                     Text(
                                         "Permissão necessária",
                                         style = MaterialTheme.typography.bodySmall,
@@ -162,13 +191,16 @@ fun SettingsScreen(
                             }
                             Switch(
                                 checked = isNotificationEnabled,
-                                onCheckedChange = {
-                                    if (it) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                onCheckedChange = { enabled ->
+                                    if (enabled) {
+                                        // Tentando ativar notificações
+                                        if (needsPermission) {
+                                            // Android 13+: solicita permissão
                                             notificationPermissionLauncher.launch(
                                                 Manifest.permission.POST_NOTIFICATIONS
                                             )
                                         } else {
+                                            // Android 12 ou anterior: agenda diretamente
                                             notificationViewModel.scheduleDailyReminder(
                                                 context,
                                                 selectedTime.hour,
@@ -177,6 +209,7 @@ fun SettingsScreen(
                                             isNotificationEnabled = true
                                         }
                                     } else {
+                                        // Desativando notificações
                                         notificationViewModel.cancelDailyReminder(context)
                                         isNotificationEnabled = false
                                     }
@@ -207,14 +240,17 @@ fun SettingsScreen(
 
                                 Button(
                                     onClick = {
+                                        // Ciclo entre horários pré-definidos
                                         selectedTime = when (selectedTime.hour) {
                                             9 -> LocalTime.of(12, 0)
                                             12 -> LocalTime.of(15, 0)
                                             15 -> LocalTime.of(18, 0)
                                             18 -> LocalTime.of(21, 0)
+                                            21 -> LocalTime.of(9, 0)
                                             else -> LocalTime.of(9, 0)
                                         }
 
+                                        // Reagenda com novo horário
                                         notificationViewModel.scheduleDailyReminder(
                                             context,
                                             selectedTime.hour,
@@ -232,7 +268,7 @@ fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (isNotificationEnabled) {
+                if (isNotificationEnabled && !needsPermission) {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
@@ -258,9 +294,44 @@ fun SettingsScreen(
                             }
 
                             Text(
-                                "Para praticar violão todos os dias no horário escolhido.",
+                                "Para praticar violão todos os dias às ${selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"))}.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+
+                if (needsPermission && !isNotificationEnabled) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f)
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 4.dp
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            ) {
+                                Text(
+                                    "Permissão de notificação necessária",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+
+                            Text(
+                                "Para receber lembretes, você precisa permitir notificações. Toque no interruptor acima para solicitar a permissão.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }
                     }

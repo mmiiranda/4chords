@@ -1,5 +1,7 @@
 package br.com.mauricio.a4chords.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -15,6 +17,7 @@ import br.com.mmiiranda.a4chords.data.repository.SongRepository
 import br.com.mmiiranda.a4chords.ui.screen.*
 import br.com.mmiiranda.a4chords.ui.viewmodel.*
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
@@ -116,7 +119,10 @@ fun AppNavigation() {
         }
 
         composable("settings") {
-            val themeViewModel: ThemeViewModel = viewModel()
+            val context = LocalContext.current
+            val themeViewModel: ThemeViewModel = viewModel(
+                factory = ThemeViewModelFactory(context)
+            )
             val notificationViewModel: NotificationViewModel = viewModel()
 
             SettingsScreen(

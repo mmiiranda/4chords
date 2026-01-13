@@ -31,7 +31,6 @@ fun EditSongScreen(
     var name by remember { mutableStateOf(song?.name ?: "") }
     var cifraText by remember { mutableStateOf(song?.cifra ?: "") }
 
-    // Atualiza os valores quando a song muda
     LaunchedEffect(song) {
         artist = song?.artist ?: ""
         name = song?.name ?: ""
@@ -217,60 +216,10 @@ fun EditSongScreen(
                         }
                     )
 
-                    // Dicas de formatação
-                    Text(
-                        text = "💡 Dica: Use linhas em branco para separar estrofes",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
                 }
             }
 
-            // Informações de ajuda
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    ) {
-                        Text(
-                            text = "🎸",
-                            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(
-                            text = "Formatando sua cifra",
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
 
-                    Text(
-                        text = "• Use [ ] para acordes (ex: [C] [G] [Am])\n" +
-                                "• Deixe uma linha em branco entre estrofes\n" +
-                                "• Use --- para separar seções\n" +
-                                "• Adicione comentários com #",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight * 1.2
-                    )
-                }
-            }
-
-            // Botão de salvar/criar na parte inferior
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(

@@ -10,7 +10,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import br.com.mmiiranda.a4chords.data.local.AppDatabase
-import br.com.mmiiranda.a4chords.data.remote.CifraApi
 import br.com.mmiiranda.a4chords.data.remote.NetworkModule
 import br.com.mmiiranda.a4chords.data.repository.SongRepository
 import br.com.mmiiranda.a4chords.ui.screen.*
@@ -32,13 +31,11 @@ fun AppNavigation() {
         startDestination = "home"
     ) {
 
-        // 🏠 HOME
         composable("home") {
             val viewModel: SongViewModel = viewModel(
                 factory = SongViewModelFactory(repository)
             )
 
-            // Carrega favoritas quando a tela abrir
             LaunchedEffect(Unit) {
                 viewModel.loadFavorites()
             }
@@ -51,14 +48,13 @@ fun AppNavigation() {
                     if (song != null) {
                         navController.navigate("edit_song?url=${song.url}")
                     } else {
-                        navController.navigate("edit_song") // cria nova cifra
+                        navController.navigate("edit_song")
                     }
                 },
                 onSettingsClick = { navController.navigate("settings") },
             )
         }
 
-        // 🔎 SEARCH
         composable("search") {
             val viewModel: SearchViewModel = viewModel(
                 factory = SearchViewModelFactory(repository)
@@ -73,7 +69,6 @@ fun AppNavigation() {
             )
         }
 
-        // 🎵 SONG / CIFRA
         composable(
             route = "song?url={url}",
             arguments = listOf(
@@ -98,7 +93,7 @@ fun AppNavigation() {
         composable(
             route = "edit_song?url={url}",
             arguments = listOf(
-                navArgument("url") { defaultValue = "" } // vazio = criar nova
+                navArgument("url") { defaultValue = "" }
             )
         ) { backStackEntry ->
 
@@ -122,11 +117,13 @@ fun AppNavigation() {
 
         composable("settings") {
             val themeViewModel: ThemeViewModel = viewModel()
+            val notificationViewModel: NotificationViewModel = viewModel()
+
             SettingsScreen(
                 themeViewModel = themeViewModel,
+                notificationViewModel = notificationViewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
-
     }
 }

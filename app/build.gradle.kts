@@ -98,7 +98,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
     implementation("com.google.firebase:firebase-analytics")
@@ -108,5 +107,9 @@ dependencies {
     implementation("androidx.room:room-runtime:${room_version}")
     implementation("androidx.room:room-ktx:${room_version}")
     ksp("androidx.room:room-compiler:$room_version")
+
+    // Notificaçoes
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
 
 }

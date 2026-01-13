@@ -5,12 +5,12 @@ import br.com.mmiiranda.a4chords.data.local.dao.SongDao
 import br.com.mmiiranda.a4chords.data.local.entity.SongEntity
 import br.com.mmiiranda.a4chords.data.remote.CifraApi
 
-class SongRepository(
+open class SongRepository(
     private val api: CifraApi,
     private val dao: SongDao
 ) {
 
-    suspend fun getFavoriteSongs() :  List<SongEntity>{
+    open suspend fun getFavoriteSongs() :  List<SongEntity>{
         return dao.getFavoriteSongs()
     }
 
@@ -44,7 +44,7 @@ class SongRepository(
         }
     }
 
-    suspend fun toggleFavorite(url: String) {
+    open suspend fun toggleFavorite(url: String) {
         val song = dao.getSongByUrl(url) ?: return
         dao.updateFavorite(url, !song.isFavorite)
     }

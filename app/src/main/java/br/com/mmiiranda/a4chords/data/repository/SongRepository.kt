@@ -10,13 +10,22 @@ class SongRepository(
     private val dao: SongDao
 ) {
 
+    suspend fun getFavoriteSongs() :  List<SongEntity>{
+        return dao.getFavoriteSongs()
+    }
+
+    suspend fun updateSong(song: SongEntity) {
+        dao.insertSong(song)
+    }
+
+    suspend fun insertOrUpdateSong(song: SongEntity) {
+        dao.insertSong(song)
+    }
 
     suspend fun getSongsByArtist(artist: String): List<SongEntity> {
-        Log.d("API_DEBUG", "Buscando artista: $artist")
 
         return try {
             val remote = api.getArtist(artist)
-            Log.d("API_RESP", "Resposta: $remote")
 
             val entities = remote.songs.map {
                 SongEntity(
@@ -33,6 +42,11 @@ class SongRepository(
             Log.e("API_ERROR", "Erro ao buscar artista", e)
             emptyList()
         }
+    }
+
+    suspend fun toggleFavorite(url: String) {
+        val song = dao.getSongByUrl(url) ?: return
+        dao.updateFavorite(url, !song.isFavorite)
     }
 
     suspend fun getCifra(url: String): SongEntity {

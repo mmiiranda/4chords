@@ -35,10 +35,14 @@ fun SongScreen(
             TopAppBar(
                 title = { Text("Cifra $song") },
                 navigationIcon = {
-                    Button(onClick = onBackClick){
+                    Button(onClick = onBackClick) {
                         Text("<-")
                     }
-
+                },
+                actions = {
+                    Button(onClick = { viewModel.onFavoriteClick(url) }) {
+                        Text(if (viewModel.isFavorite) "★" else "☆")
+                    }
                 }
             )
         }

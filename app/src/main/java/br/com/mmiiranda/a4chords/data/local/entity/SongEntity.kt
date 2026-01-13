@@ -8,5 +8,6 @@ data class SongEntity(
     @PrimaryKey val url: String,
     val artist: String,
     val name: String,
-    val cifra: String? = null
+    val cifra: String? = null,
+    val isFavorite: Boolean = false
 )

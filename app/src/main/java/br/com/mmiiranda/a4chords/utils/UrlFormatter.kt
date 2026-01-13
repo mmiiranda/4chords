@@ -1,4 +1,3 @@
-// utils/UrlFormatter.kt
 package br.com.mmiiranda.a4chords.utils
 
 object UrlFormatter {

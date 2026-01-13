@@ -35,20 +35,16 @@ fun SettingsScreen(
     var selectedTime by remember { mutableStateOf(LocalTime.of(18, 0)) }
     var showPermissionDialog by remember { mutableStateOf(false) }
 
-    // OBSERVE o estado do tema
     val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
 
-    // VERIFIQUE se o lembrete já está agendado
     LaunchedEffect(Unit) {
         isNotificationEnabled = notificationViewModel.isReminderScheduled(context)
     }
 
-    // Lançador para permissão de notificação (Android 13+)
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            // Permissão concedida, agenda o lembrete
             notificationViewModel.scheduleDailyReminder(
                 context,
                 selectedTime.hour,
@@ -56,13 +52,11 @@ fun SettingsScreen(
             )
             isNotificationEnabled = true
         } else {
-            // Permissão negada
             isNotificationEnabled = false
             showPermissionDialog = true
         }
     }
 
-    // Verifica se precisa solicitar permissão
     val needsPermission = PermissionUtils.shouldRequestNotificationPermission() &&
             !PermissionUtils.hasNotificationPermission(context)
 
@@ -235,7 +229,6 @@ fun SettingsScreen(
 
                                 Button(
                                     onClick = {
-                                        // Ciclo entre horários pré-definidos
                                         selectedTime = when (selectedTime.hour) {
                                             9 -> LocalTime.of(12, 0)
                                             12 -> LocalTime.of(15, 0)
@@ -245,7 +238,6 @@ fun SettingsScreen(
                                             else -> LocalTime.of(9, 0)
                                         }
 
-                                        // Reagenda com novo horário
                                         notificationViewModel.scheduleDailyReminder(
                                             context,
                                             selectedTime.hour,

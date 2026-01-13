@@ -29,7 +29,6 @@ fun SearchScreen(
     val state = viewModel.uiState
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    // Mostra o formato que será enviado para API
     val formattedQuery = remember(query) {
         if (query.isNotBlank()) UrlFormatter.formatArtistForApi(query) else ""
     }
@@ -245,7 +244,6 @@ fun SearchScreen(
                             }
                         } else {
                             Column {
-                                // Contador de resultados
                                 Text(
                                     text = "${state.songs.size} cifras encontradas",
                                     style = MaterialTheme.typography.bodyMedium,

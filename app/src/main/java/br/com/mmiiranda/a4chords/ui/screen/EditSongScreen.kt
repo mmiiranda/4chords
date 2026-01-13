@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -71,7 +70,7 @@ fun EditSongScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Seção de informações básicas
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,7 +83,6 @@ fun EditSongScreen(
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    // Artista
                     OutlinedTextField(
                         value = artist,
                         onValueChange = { artist = it },
@@ -117,7 +115,6 @@ fun EditSongScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Nome da música
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -152,7 +149,6 @@ fun EditSongScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Seção da cifra
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -23,10 +23,11 @@ open class SongRepository(
     }
 
     suspend fun getSongsByArtist(artist: String): List<SongEntity> {
-
+        Log.e("API_ERROR", "Erro ao buscar $artist",)
         return try {
             val remote = api.getArtist(artist)
 
+            Log.e("API_ERROR", "Erro ao buscar $artist",)
             val entities = remote.songs.map {
                 SongEntity(
                     url = it.url,

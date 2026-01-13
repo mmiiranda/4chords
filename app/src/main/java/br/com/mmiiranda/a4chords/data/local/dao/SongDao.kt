@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import br.com.mmiiranda.a4chords.data.local.entity.SongEntity
-import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface SongDao {

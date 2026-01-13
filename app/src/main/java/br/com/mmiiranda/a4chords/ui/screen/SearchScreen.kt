@@ -87,6 +87,9 @@ fun SearchScreen(
                         )
                     )
 
+                    if (query.isNotBlank() && formattedQuery != query.lowercase().trim()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 

@@ -141,7 +141,6 @@ fun SettingsScreen(
                             Switch(
                                 checked = isDarkTheme,
                                 onCheckedChange = { themeViewModel.toggleTheme() },
-                                colors = SwitchColors
                             )
                         }
                     }
@@ -193,14 +192,11 @@ fun SettingsScreen(
                                 checked = isNotificationEnabled,
                                 onCheckedChange = { enabled ->
                                     if (enabled) {
-                                        // Tentando ativar notificações
                                         if (needsPermission) {
-                                            // Android 13+: solicita permissão
                                             notificationPermissionLauncher.launch(
                                                 Manifest.permission.POST_NOTIFICATIONS
                                             )
                                         } else {
-                                            // Android 12 ou anterior: agenda diretamente
                                             notificationViewModel.scheduleDailyReminder(
                                                 context,
                                                 selectedTime.hour,
@@ -209,7 +205,6 @@ fun SettingsScreen(
                                             isNotificationEnabled = true
                                         }
                                     } else {
-                                        // Desativando notificações
                                         notificationViewModel.cancelDailyReminder(context)
                                         isNotificationEnabled = false
                                     }
